@@ -20,4 +20,10 @@ describe('filerev', function () {
     var revisioned= fs.statSync('test/tmp/dest/file.a0539763.png').size;
     assert(revisioned === original);
   });
+
+  it('should allow wildcards without extensions in files src', function () {
+    var original = fs.statSync('test/fixtures/directory/file.css').size;
+    var revisioned = fs.statSync('test/tmp/directory/file.99914b93.css').size;
+    assert(revisioned === original);
+  });
 });

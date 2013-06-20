@@ -31,27 +31,28 @@ module.exports = function (grunt) {
       }
 
       el.src.forEach(function (file) {
-        // don't attempt to handle non-files
-        if( !grunt.file.isFile(file) ) return;
-        var dirname;
-        var hash = crypto.createHash(options.algorithm).update(grunt.file.read(file), options.encoding).digest('hex');
-        var suffix = hash.slice(0, options.length);
-        var ext = path.extname(file);
-        var newName = [path.basename(file, ext), suffix, ext.slice(1)].join('.');
-        var resultPath;
+        // Only process the src if it is a file
+        if( grunt.file.isFile(file) ){
+          var dirname;
+          var hash = crypto.createHash(options.algorithm).update(grunt.file.read(file), options.encoding).digest('hex');
+          var suffix = hash.slice(0, options.length);
+          var ext = path.extname(file);
+          var newName = [path.basename(file, ext), suffix, ext.slice(1)].join('.');
+          var resultPath;
 
-        if (move) {
-          dirname = path.dirname(file);
-          resultPath = path.resolve(dirname, newName);
-          fs.renameSync(file, resultPath);
-        } else {
-          dirname = el.dest;
-          resultPath = path.resolve(dirname, newName);
-          fs.createReadStream(file).pipe(fs.createWriteStream(resultPath));
+          if (move) {
+            dirname = path.dirname(file);
+            resultPath = path.resolve(dirname, newName);
+            fs.renameSync(file, resultPath);
+          } else {
+            dirname = el.dest;
+            resultPath = path.resolve(dirname, newName);
+            fs.createReadStream(file).pipe(fs.createWriteStream(resultPath));
+          }
+
+          filerev.summary[file] = path.join(dirname, newName);
+          grunt.log.writeln('✔ '.green + file + (' changed to ').grey + filerev.summary[file]);
         }
-
-        filerev.summary[file] = path.join(dirname, newName);
-        grunt.log.writeln('✔ '.green + file + (' changed to ').grey + filerev.summary[file]);
       });
       next();
     }, this.async());

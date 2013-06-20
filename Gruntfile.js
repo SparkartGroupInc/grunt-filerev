@@ -17,9 +17,9 @@ module.exports = function (grunt) {
     },
     copy: {
       test: {
-        flatten: true,
         expand: true,
-        src: ['test/fixtures/*.png'],
+        cwd: 'test/fixtures/',
+        src: ['**/*'],
         dest: 'test/tmp/',
       },
     },
@@ -44,6 +44,9 @@ module.exports = function (grunt) {
         },
         src: ['test/fixtures/file.png', 'test/fixtures/another.png'],
         dest: 'test/tmp'
+      },
+      withNestedDirectory: {
+        src: ['test/tmp/directory/**/*']
       }
     },
     simplemocha: {
